@@ -26,12 +26,23 @@ The NCDE model demonstrates a significant "Robustness Gap" compared to recurrent
 ### 1. Robustness to Missing Data
 NCDE maintains near-nominal accuracy even when 70% of the input points are removed, effectively "bridging the gaps" using learned dynamics.
 
-### 2. Vector Field & Latent Flow
-The model learns a continuous vector field $f_\theta$ that governs the evolution of the latent state $z$.
-*(Insert your Vector Field Plot here)*
+![alt text](robustness.png)
 
-### 3. Future Trajectory Forecasting
-The NCDE Forecaster extrapolates future pen coordinates $(x, y)$ based on partial observations with an MSE of $\sim 10^{-5}$.
+A visual example of a "stressed" input trajectory. Despite 70% of the observations being removed at random, the Neural CDE model successfully classifies the character by reconstructing the continuous latent path from the sparse remaining points. Unlike discrete models that would require imputation to fill these gaps, the NCDE treats the input as a continuous control signal, making it naturally immune to missing values.
+
+### 2. Early Classification: Proactive Decision Making
+NCDE shows superior performance in "Early Classification" tasks. It reaches over 70% accuracy seeing only 50% of the trajectory.
+
+![alt text](sequence.png)
+
+The standard LSTM fails to generalize on partial or padded sequences, remaining at baseline chance levels (~5-7%). The NCDE, however, models the dynamics of the movement, allowing it to "guess" the intent of the writer long before the stroke is finished.
+
+### 3. The Robustness Gap: NCDE vs. LSTM
+A performance benchmark across various levels of data loss. The Neural CDE maintains near-nominal accuracy (~95%) up to 70% data loss and remains highly functional even at 90% loss.
+
+![alt text](ncdevslstm.png)
+
+The "Robustness Gap" highlighted by the arrow shows that while LSTMs are restricted by fixed-step hidden state updates, the NCDE's adaptive ODE solver adjusts its integration steps based on the continuity of the input spline, effectively "bridging the gap" where data is missing.
 
 ## 🛠️ Implementation Details
 - **Framework:** PyTorch & `torchcde`
